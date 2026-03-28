@@ -57,8 +57,21 @@ the finding.
 
 ## Installation
 
+**Standard install:**
 ```bash
 pip install bridgekit
+```
+
+**In a virtual environment (recommended for clean setups):**
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install bridgekit
+```
+
+**In a Jupyter notebook:**
+```python
+!pip install bridgekit
 ```
 
 Requires an Anthropic API key:
