@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bridgekit"
+version = "0.1.0"
+description = "AI tools that make you a better data scientist, not a redundant one."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["data science", "AI", "analysis", "evaluation", "anthropic"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "anthropic>=0.20.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/bridgekit/bridgekit"
+Issues = "https://github.com/bridgekit/bridgekit/issues"
