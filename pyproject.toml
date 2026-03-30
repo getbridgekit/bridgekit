@@ -2,6 +2,9 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["bridgekit*"]
+
 [project]
 name = "bridgekit"
 version = "0.2.0"
