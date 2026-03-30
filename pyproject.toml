@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bridgekit"
-version = "0.1.1"
+version = "0.2.0"
 description = "AI tools that make you a better data scientist, not a redundant one."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -19,6 +19,12 @@ classifiers = [
 ]
 dependencies = [
     "anthropic>=0.20.0",
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.0.0",
+    "pypdf>=3.0.0",
+    "python-docx>=1.0.0",
+    "python-pptx>=0.6.0",
+    "nbformat>=5.0.0",
 ]
 
 [project.urls]

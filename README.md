@@ -115,6 +115,47 @@ Paste your writeup as a string and call `evaluate()` — that's it.
 
 ---
 
+## Tool #2: Analysis Search
+
+Ask questions across a collection of your past analysis documents. Point it at a folder and get answers grounded in your actual work — no digging through files manually.
+
+Uses a vector database and semantic similarity to find relevant context across your documents — not keyword matching.
+
+Supports `.txt`, `.md`, `.pdf`, `.docx`, `.pptx`, and `.ipynb` files.
+
+**From a folder:**
+```python
+from bridgekit import ask
+
+print(ask("what drove churn in Q3?", source="reports/"))
+```
+
+**From raw text:**
+```python
+from bridgekit import ask
+
+text = """
+Q3 churn rose to 4.5%, driven by a product outage in August and a pricing
+change in July that increased SMB costs by 12%.
+"""
+
+print(ask("what caused the Q3 churn spike?", text=text))
+```
+
+**Output** *(based on sample data included in the repo)*:
+```
+Based on the Q3 2024 Churn Analysis, two primary factors drove the elevated
+churn rate of 4.5%:
+
+1. August Product Outage — A 14-hour outage affected 3,800 accounts. Impacted
+   accounts churned at 8.1% vs 3.2% for unaffected accounts.
+
+2. July Pricing Change — SMB costs increased by an average of 12%, causing SMB
+   churn to spike to 7.2% — the highest single-month figure in the dataset.
+```
+
+---
+
 ## Why not just use Claude?
 
 You could. But you'd need to know what to ask, how to frame it, and what a good answer looks like. Bridgekit has that baked in — it knows you're a data scientist presenting findings, so it asks the right questions automatically. No prompt engineering required. Just paste your work and run it.
@@ -137,7 +178,7 @@ Bridgekit only ever sees text you write yourself — your narrative, your conclu
 
 ## What's next?
 
-Bridgekit is a suite, not a one-off. The analysis reviewer is tool #1. Coming next:
+Bridgekit is a suite, not a one-off. Two tools are live — more are coming:
 
 - **Statistical approach suggester** — describe your problem in plain English, get the right test and why
 - **Stakeholder translator** — turn your technical findings into a narrative a non-technical audience will actually follow
