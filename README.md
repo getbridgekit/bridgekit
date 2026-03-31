@@ -125,6 +125,8 @@ Uses a vector database and semantic similarity to find relevant context across y
 
 Supports `.txt`, `.md`, `.pdf`, `.docx`, `.pptx`, and `.ipynb` files.
 
+> **Note:** The first run will download the MiniLM embedding model (~90MB). This is a one-time download — it gets cached locally for all subsequent calls.
+
 **From a folder:**
 ```python
 from bridgekit import ask
