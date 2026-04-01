@@ -1,5 +1,3 @@
-![Bridgekit](assets/logo.png)
-
 # Bridgekit
 
 **AI tools that make you a better data scientist, not a redundant one.**
