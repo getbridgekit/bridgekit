@@ -7,7 +7,7 @@ include = ["bridgekit*"]
 
 [project]
 name = "bridgekit"
-version = "0.2.1"
+version = "0.2.2"
 description = "AI tools that make you a better data scientist, not a redundant one."
 readme = "README.md"
 requires-python = ">=3.9"
