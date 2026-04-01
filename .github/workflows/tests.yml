@@ -22,7 +22,9 @@ jobs:
           python-version: "3.11"
 
       - name: Install package with dev dependencies
-        run: pip install -e ".[dev]"
+        run: |
+          pip install pytest pytest-mock
+          pip install -e ".[dev]"
 
       - name: Run tests
         env:
