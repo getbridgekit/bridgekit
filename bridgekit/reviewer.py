@@ -56,6 +56,9 @@ def evaluate(text: str) -> str:
     Returns:
         Structured feedback across five dimensions.
     """
+    if not text or not text.strip():
+        raise ValueError("Text cannot be empty.")
+
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise EnvironmentError(
