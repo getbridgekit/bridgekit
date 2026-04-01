@@ -27,4 +27,4 @@ jobs:
       - name: Run tests
         env:
           ANTHROPIC_API_KEY: dummy-key-for-testing
-        run: pytest tests/ -v
+        run: python -m pytest tests/ -v
