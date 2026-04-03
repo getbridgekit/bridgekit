@@ -158,6 +158,65 @@ churn rate of 4.5%:
 
 ---
 
+## Tool #3: Analysis Planner
+
+Describe your analytical problem and get a structured plan for the right approach — before you start the analysis.
+
+Covers the recommended method, why it fits your problem, key assumptions, common pitfalls, and alternatives.
+
+```python
+from bridgekit import plan
+
+print(plan(
+    question="Does our new onboarding flow increase upgrade rates?",
+    data_description="1,000 users randomly split 50/50 between old and new onboarding. Variables: upgrade status (binary), time to upgrade (days), acquisition channel, plan tier.",
+    goal="causal inference"
+))
+```
+
+`data_description` and `goal` are optional — the more context you provide, the more tailored the recommendation.
+
+**`goal` examples:** `"causal inference"`, `"prediction"`, `"segmentation"`, `"hypothesis testing"`, `"exploration"`
+
+**Output:**
+```
+BRIDGEKIT ANALYSIS PLAN
+─────────────────────────────────────────
+
+RECOMMENDED APPROACH
+Two-sample proportion test (z-test or Fisher's exact) for the primary
+analysis, since you have a randomized experiment with a binary outcome
+and want to estimate the causal effect of the new onboarding flow on
+upgrade rates.
+
+WHY THIS APPROACH
+Randomization handles confounding, so you don't need regression
+adjustment to get an unbiased causal estimate. With 500 per group,
+you have reasonable power for detecting meaningful differences (~80%
+power for a 7-8 percentage point lift from a 20% baseline).
+
+KEY ASSUMPTIONS
+- Randomization was correctly implemented (no selection bias)
+- No interference between users
+- SUTVA: each user has a single well-defined treatment version
+- Outcome measurement is complete (watch for differential dropout)
+- Users in both arms had equal opportunity to upgrade
+
+WATCH OUT FOR
+Peeking and early stopping — if you're checking results repeatedly
+before the experiment concludes, your p-values are invalid. Decide
+your sample size and analysis time upfront.
+
+ALTERNATIVES
+- Logistic regression with covariates (channel, plan tier): use if you
+  discover post-hoc imbalance or want to tighten confidence intervals
+- Survival analysis (Cox model): use if time-to-upgrade matters as
+  much as whether users upgrade
+─────────────────────────────────────────
+```
+
+---
+
 ## Why not just use Claude?
 
 You could. But you'd need to know what to ask, how to frame it, and what a good answer looks like. Bridgekit has that baked in — it knows you're a data scientist presenting findings, so it asks the right questions automatically. No prompt engineering required. Just paste your work and run it.
@@ -180,7 +239,7 @@ Bridgekit only ever sees text you write yourself — your narrative, your conclu
 
 ## What's next?
 
-Bridgekit is a suite, not a one-off. Two tools are live — more are coming:
+Bridgekit is a suite, not a one-off. Three tools are live — more are coming:
 
 - **Statistical approach suggester** — describe your problem in plain English, get the right test and why
 - **Stakeholder translator** — turn your technical findings into a narrative a non-technical audience will actually follow
