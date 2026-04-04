@@ -1,5 +1,6 @@
 import os
 import anthropic
+from .config import DEFAULT_MODEL
 
 SYSTEM_PROMPT = """You are a senior statistician and data scientist advising a colleague on the right analytical approach for their problem.
 
@@ -60,7 +61,7 @@ def plan(question: str, data_description: str = None, goal: str = None) -> str:
 
     client = anthropic.Anthropic(api_key=api_key)
     message = client.messages.create(
-        model="claude-opus-4-5",
+        model=DEFAULT_MODEL,
         max_tokens=1024,
         system=SYSTEM_PROMPT,
         messages=[

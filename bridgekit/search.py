@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import anthropic
+from .config import DEFAULT_MODEL
 import chromadb
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
@@ -106,7 +107,7 @@ def ask(question: str, source: str = None, text: str = None) -> str:
     # Generate answer with Claude
     anthropic_client = anthropic.Anthropic(api_key=api_key)
     message = anthropic_client.messages.create(
-        model="claude-opus-4-5",
+        model=DEFAULT_MODEL,
         max_tokens=1024,
         system=(
             "You are a senior data scientist answering questions based on analysis reports. "

@@ -1,5 +1,6 @@
 import os
 import anthropic
+from .config import DEFAULT_MODEL
 
 SYSTEM_PROMPT = """You are a senior data scientist reviewing a colleague's analysis writeup. 
 You are direct, constructive, and specific. You do not flatter — you help people improve.
@@ -68,7 +69,7 @@ def evaluate(text: str) -> str:
     client = anthropic.Anthropic(api_key=api_key)
 
     message = client.messages.create(
-        model="claude-opus-4-5",
+        model=DEFAULT_MODEL,
         max_tokens=1024,
         system=SYSTEM_PROMPT,
         messages=[
