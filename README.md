@@ -32,34 +32,32 @@ BRIDGEKIT ANALYSIS REVIEW
 ─────────────────────────────────────────
 
 1. CLARITY
-✅ STRONG — Clear and jargon-free. "3x more likely to upgrade" is concrete
-and accessible to a non-technical reader.
+✅ STRONG — Clean, concise, and jargon-free. Any stakeholder could read
+this and immediately understand the claim and the recommendation.
 
-2. AUDIENCE CLARITY
-⚠️ NEEDS WORK — Unclear who this is written for. Leadership will want a
-revenue number; a product team will want to know which onboarding steps to
-change. Pick your reader.
+2. STATISTICAL RIGOR
+⚠️ NEEDS WORK — "3x more likely" is a compelling number, but critical
+context is missing. How many users are in each group? What's the base
+upgrade rate? There's no confidence interval or p-value, so we can't
+assess whether this difference is statistically significant or noise.
 
-3. STATISTICAL RIGOR
-⚠️ NEEDS WORK — No sample size, no confidence interval, and no mention of
-whether this is correlation or a causal finding. "3x more likely" needs a
-denominator.
+3. METHODOLOGY
+❌ MISSING — This reads as a pure correlation finding, but the
+recommendation implies causation. Users who explore reporting in week one
+may simply be more motivated or already closer to upgrading. Without
+addressing the self-selection problem, this recommendation is not
+defensible.
 
-4. METHODOLOGY
-❌ MISSING — No explanation of how the analysis was done. Did you control
-for user intent? Power users may seek out reporting features regardless of
-onboarding.
-
-5. BUSINESS IMPACT
-⚠️ NEEDS WORK — "Growth lever" is directional but not quantified. How many
-users hit the reporting feature in week one? What's the upgrade rate
-difference in revenue terms?
+4. BUSINESS IMPACT
+⚠️ NEEDS WORK — "Growth lever" is directional, not quantified. Translate
+the 3x lift into projected revenue or upgrade volume so leadership can
+prioritize this against competing initiatives.
 
 ─────────────────────────────────────────
 BOTTOM LINE
-Establish whether this is causal or correlational before recommending it
-as a growth lever — selection bias is the obvious objection and it's not
-addressed.
+You must address the correlation-vs-causation gap before presenting —
+otherwise you risk recommending an onboarding investment that targets a
+symptom of upgrade intent rather than a cause of it.
 ```
 
 ---
