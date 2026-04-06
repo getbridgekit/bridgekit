@@ -241,7 +241,6 @@ Bridgekit only ever sees text you write yourself — your narrative, your conclu
 
 Bridgekit is a suite, not a one-off. Three tools are live — more are coming:
 
-- **Statistical approach suggester** — describe your problem in plain English, get the right test and why
 - **Stakeholder translator** — turn your technical findings into a narrative a non-technical audience will actually follow
 - **Assumption checker** — state your analytical assumptions, get the ones you missed
 
