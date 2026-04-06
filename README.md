@@ -4,7 +4,7 @@
 
 Data scientists are not being replaced — they're being asked to do more with less context, less time, and more pressure to be right. Bridgekit is a growing suite of small, focused tools that bring AI into your existing workflow to sharpen your thinking, catch your blind spots, and level up your craft.
 
-No new interface to learn. No data leaving your hands. Just better work.
+No new interface to learn. Just better work.
 
 ---
 
