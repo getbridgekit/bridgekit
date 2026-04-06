@@ -4,61 +4,7 @@
 
 Data scientists are not being replaced — they're being asked to do more with less context, less time, and more pressure to be right. Bridgekit is a growing suite of small, focused tools that bring AI into your existing workflow to sharpen your thinking, catch your blind spots, and level up your craft.
 
-No new interface to learn. Just better work.
-
----
-
-## Tool #1: Analysis Reviewer
-
-Write your findings the way you normally would. Bridgekit reads them and gives you the feedback a senior data scientist would — before you walk into the meeting.
-
-```python
-from bridgekit import evaluate
-
-text = """
-I analyzed 90 days of user behavior data to understand what drives subscription 
-upgrades. Users who engaged with the reporting feature within their first week 
-were 3x more likely to upgrade within 30 days. I recommend we prioritize 
-onboarding users to reporting as a growth lever.
-"""
-
-evaluate(text)
-```
-
-**Output:**
-
-```
-BRIDGEKIT ANALYSIS REVIEW
-─────────────────────────────────────────
-
-1. CLARITY
-✅ STRONG — Clean, concise, and jargon-free. Any stakeholder could read
-this and immediately understand the claim and the recommendation.
-
-2. STATISTICAL RIGOR
-⚠️ NEEDS WORK — "3x more likely" is a compelling number, but critical
-context is missing. How many users are in each group? What's the base
-upgrade rate? There's no confidence interval or p-value, so we can't
-assess whether this difference is statistically significant or noise.
-
-3. METHODOLOGY
-❌ MISSING — This reads as a pure correlation finding, but the
-recommendation implies causation. Users who explore reporting in week one
-may simply be more motivated or already closer to upgrading. Without
-addressing the self-selection problem, this recommendation is not
-defensible.
-
-4. BUSINESS IMPACT
-⚠️ NEEDS WORK — "Growth lever" is directional, not quantified. Translate
-the 3x lift into projected revenue or upgrade volume so leadership can
-prioritize this against competing initiatives.
-
-─────────────────────────────────────────
-BOTTOM LINE
-You must address the correlation-vs-causation gap before presenting —
-otherwise you risk recommending an onboarding investment that targets a
-symptom of upgrade intent rather than a cause of it.
-```
+No new interface to learn. No data leaving your hands. Just better work.
 
 ---
 
@@ -106,21 +52,71 @@ from bridgekit import evaluate, plan, ask
 
 **Review a writeup:**
 ```python
-print(evaluate("Your analysis writeup goes here."))
+print(evaluate("I analyzed 90 days of user behavior data. Users who engaged with the reporting feature were 3x more likely to upgrade."))
 ```
 
 **Plan your analytical approach:**
 ```python
-print(plan(
-    question="Did our new onboarding flow reduce churn?",
-    data_description="13,000 accounts, phased rollout by signup date.",
-    goal="causal inference"
-))
+print(plan("Did our onboarding flow reduce churn?"))
 ```
 
 **Search past reports:**
 ```python
 print(ask("What drove churn in Q3?", source="reports/"))
+```
+
+---
+
+## Tool #1: Analysis Reviewer
+
+Write your findings the way you normally would. Bridgekit reads them and gives you the feedback a senior data scientist would — before you walk into the meeting.
+
+```python
+from bridgekit import evaluate
+
+text = """
+I analyzed 90 days of user behavior data to understand what drives subscription
+upgrades. Users who engaged with the reporting feature within their first week
+were 3x more likely to upgrade within 30 days. I recommend we prioritize
+onboarding users to reporting as a growth lever.
+"""
+
+print(evaluate(text))
+```
+
+**Output:**
+
+```
+BRIDGEKIT ANALYSIS REVIEW
+─────────────────────────────────────────
+
+1. CLARITY
+✅ STRONG — Clean, concise, and jargon-free. Any stakeholder could read
+this and immediately understand the claim and the recommendation.
+
+2. STATISTICAL RIGOR
+⚠️ NEEDS WORK — "3x more likely" is a compelling number, but critical
+context is missing. How many users are in each group? What's the base
+upgrade rate? There's no confidence interval or p-value, so we can't
+assess whether this difference is statistically significant or noise.
+
+3. METHODOLOGY
+❌ MISSING — This reads as a pure correlation finding, but the
+recommendation implies causation. Users who explore reporting in week one
+may simply be more motivated or already closer to upgrading. Without
+addressing the self-selection problem, this recommendation is not
+defensible.
+
+4. BUSINESS IMPACT
+⚠️ NEEDS WORK — "Growth lever" is directional, not quantified. Translate
+the 3x lift into projected revenue or upgrade volume so leadership can
+prioritize this against competing initiatives.
+
+─────────────────────────────────────────
+BOTTOM LINE
+You must address the correlation-vs-causation gap before presenting —
+otherwise you risk recommending an onboarding investment that targets a
+symptom of upgrade intent rather than a cause of it.
 ```
 
 ---
@@ -237,13 +233,7 @@ It also lives in your Jupyter notebook, so there's no context switching. You sta
 
 ## Why a library and not a chatbot?
 
-Because your analysis already lives in a notebook. Bridgekit meets you there. A chatbot asks you to re-explain your work from scratch every time. Bridgekit is one function call at the end of your existing process — consistent, reproducible, and fast.
-
----
-
-## Is my data safe?
-
-Bridgekit only ever sees text you write yourself — your narrative, your conclusions, your writeup. It never touches your raw data, your DataFrames, or your code. You're sending your own words to an API, the same way you'd paste them into a Google Doc to share with a colleague.
+Because your analysis already lives in a notebook. Bridgekit meets you there. A chatbot asks you to re-explain your work from scratch every time. Bridgekit is one function call — consistent, reproducible, and fast.
 
 ---
 
