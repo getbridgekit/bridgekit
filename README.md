@@ -175,7 +175,7 @@ from bridgekit import plan
 
 print(plan(
     question="Does our new onboarding flow increase upgrade rates?",
-    data_description="1,000 users randomly split 50/50 between old and new onboarding. Variables: upgrade status (binary), time to upgrade (days), acquisition channel, plan tier.",
+    data_description="We are running an A/B test with ~1,000 users split between old and new onboarding. Key variables will include upgrade status, time to upgrade, acquisition channel, and plan tier.",
     goal="causal inference"
 ))
 ```
