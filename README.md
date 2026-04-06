@@ -28,29 +28,38 @@ evaluate(text)
 **Output:**
 
 ```
-BRIDGEKIT FEEDBACK
+BRIDGEKIT ANALYSIS REVIEW
 ─────────────────────────────────────────
 
-✅ LOGIC
-Your conclusion follows from the data. The 3x lift is a meaningful signal 
-worth acting on.
+1. CLARITY
+✅ STRONG — Clear and jargon-free. "3x more likely to upgrade" is concrete
+and accessible to a non-technical reader.
 
-⚠️  WHAT'S MISSING
-- Did you control for user intent? Users who explore reporting features may 
-  already be power users likely to upgrade regardless.
-- What's the sample size behind the 3x figure?
-- Is this correlation or did you establish any causal direction?
+2. AUDIENCE CLARITY
+⚠️ NEEDS WORK — Unclear who this is written for. Leadership will want a
+revenue number; a product team will want to know which onboarding steps to
+change. Pick your reader.
 
-🎯 WEAKEST POINT
-"I recommend we prioritize onboarding to reporting" is a big leap from an 
-observational finding. A senior DS would push back on this in the meeting.
+3. STATISTICAL RIGOR
+⚠️ NEEDS WORK — No sample size, no confidence interval, and no mention of
+whether this is correlation or a causal finding. "3x more likely" needs a
+denominator.
 
-💡 LEVEL UP
-Look into selection bias and how to address it — this analysis would be 
-significantly stronger with a matched cohort or an experiment to validate 
-the finding.
+4. METHODOLOGY
+❌ MISSING — No explanation of how the analysis was done. Did you control
+for user intent? Power users may seek out reporting features regardless of
+onboarding.
+
+5. BUSINESS IMPACT
+⚠️ NEEDS WORK — "Growth lever" is directional but not quantified. How many
+users hit the reporting feature in week one? What's the upgrade rate
+difference in revenue terms?
 
 ─────────────────────────────────────────
+BOTTOM LINE
+Establish whether this is causal or correlational before recommending it
+as a growth lever — selection bias is the obvious objection and it's not
+addressed.
 ```
 
 ---
@@ -84,14 +93,6 @@ export ANTHROPIC_API_KEY=your_key_here
 
 ## Getting Started
 
-**From the terminal:**
-
-```bash
-python example.py
-```
-
-**From a Jupyter notebook:**
-
 Set your API key before launching Jupyter:
 
 ```bash
@@ -99,19 +100,30 @@ export ANTHROPIC_API_KEY=your_key_here
 jupyter notebook
 ```
 
-Then in a cell:
+Then import whichever tool you need:
 
 ```python
-from bridgekit import evaluate
-
-text = """
-Your analysis writeup goes here.
-"""
-
-print(evaluate(text))
+from bridgekit import evaluate, plan, ask
 ```
 
-Paste your writeup as a string and call `evaluate()` — that's it.
+**Review a writeup:**
+```python
+print(evaluate("Your analysis writeup goes here."))
+```
+
+**Plan your analytical approach:**
+```python
+print(plan(
+    question="Did our new onboarding flow reduce churn?",
+    data_description="13,000 accounts, phased rollout by signup date.",
+    goal="causal inference"
+))
+```
+
+**Search past reports:**
+```python
+print(ask("What drove churn in Q3?", source="reports/"))
+```
 
 ---
 
