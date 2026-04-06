@@ -51,7 +51,7 @@ def evaluate(text: str) -> str:
         text: Your analysis writeup as a plain string.
 
     Returns:
-        Structured feedback across five dimensions.
+        Structured feedback across four dimensions.
     """
     if not text or not text.strip():
         raise ValueError("Text cannot be empty.")
