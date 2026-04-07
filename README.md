@@ -243,6 +243,7 @@ Bridgekit is a suite, not a one-off. Three tools are live — more are coming:
 
 - **Stakeholder translator** — turn your technical findings into a narrative a non-technical audience will actually follow
 - **Assumption checker** — state your analytical assumptions, get the ones you missed
+- **Multi-model support** — use any LLM provider (OpenAI, Gemini, open source models via OpenRouter) instead of being tied to Anthropic
 
 Each tool is small, focused, and built for the way data scientists actually work.
 
