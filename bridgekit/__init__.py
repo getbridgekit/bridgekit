@@ -2,5 +2,5 @@ from .reviewer import evaluate
 from .search import ask
 from .planner import plan
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 __all__ = ["evaluate", "ask", "plan"]
