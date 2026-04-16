@@ -1,6 +1,14 @@
+<p align="center">
+  <img src="assets/logo.png" alt="Bridgekit" width="200"/>
+</p>
+
 # Bridgekit
 
 **AI tools that make you a better data scientist, not a redundant one.**
+
+[![PyPI](https://img.shields.io/pypi/v/bridgekit)](https://pypi.org/project/bridgekit/)
+[![Downloads](https://img.shields.io/pypi/dm/bridgekit)](https://pypi.org/project/bridgekit/)
+[![License](https://img.shields.io/pypi/l/bridgekit)](https://github.com/getbridgekit/bridgekit/blob/main/LICENSE)
 
 Data scientists are not being replaced — they're being asked to do more with less context, less time, and more pressure to be right. Bridgekit is a growing suite of small, focused tools that bring AI into your existing workflow to sharpen your thinking, catch your blind spots, and level up your craft.
 
