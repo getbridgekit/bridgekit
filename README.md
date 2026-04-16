@@ -47,7 +47,7 @@ jupyter notebook
 Then import whichever tool you need:
 
 ```python
-from bridgekit import evaluate, plan, ask
+from bridgekit import evaluate, plan, ask, redteam
 ```
 
 **Review a writeup:**
@@ -69,7 +69,7 @@ print(ask("What drove churn in Q3?", source="reports/"))
 
 ## Tool #1: Analysis Reviewer
 
-Write your findings the way you normally would. Bridgekit reads them and gives you the feedback a senior data scientist would — before you walk into the meeting.
+Write your findings the way you normally would. Bridgekit reads them and gives you the feedback a senior data scientist would — to help you improve your work before you walk into the meeting.
 
 ```python
 from bridgekit import evaluate
@@ -223,6 +223,116 @@ ALTERNATIVES
 
 ---
 
+## Tool #4: Red Team
+
+Simulate a skeptical stakeholder challenging your work to prepare you for the questions you hope no one asks — but now you're ready if they do.
+
+```python
+from bridgekit import redteam
+
+text = """
+I analyzed 90 days of user behavior data to understand what drives subscription
+upgrades. Users who engaged with the reporting feature within their first week
+were 3x more likely to upgrade within 30 days. I recommend we prioritize
+onboarding users to reporting as a growth lever.
+"""
+
+# Default — skeptical senior executive
+print(redteam(text))
+
+# Or specify a stakeholder
+print(redteam(text, stakeholder="VP of Engineering"))
+print(redteam(text, stakeholder="VP of Marketing"))
+```
+
+Same writeup, different attack angles:
+
+**VP of Engineering output:**
+```
+BRIDGEKIT RED TEAM
+─────────────────────────────────────────
+STAKEHOLDER: VP of Engineering
+
+CRITIQUE 1: Classic correlation-causation conflation
+❯ "You're telling me to re-architect our onboarding flow based on a correlation?
+Users who dig into reporting in week one are probably already power users.
+You haven't shown me that exposing someone to reporting causes them to upgrade."
+WHY IT LANDS: No causal identification strategy — no experiment, no instrumental
+variable, no matched cohort analysis.
+TO ADDRESS: Run an A/B test where randomized new users get guided into reporting
+during onboarding. At minimum, a propensity-score-matched comparison controlling
+for user segment and acquisition channel.
+
+CRITIQUE 2: 3x on what base rate?
+❯ "If the base upgrade rate is 0.5% and reporting users upgrade at 1.5%, I'm not
+re-prioritizing my engineering roadmap for that."
+WHY IT LANDS: Relative lift without base rates inflates significance. No way to
+evaluate whether this justifies the engineering investment.
+TO ADDRESS: Absolute upgrade rates, cohort sizes, estimated incremental revenue,
+and rough engineering cost to frame ROI.
+
+CRITIQUE 3: No definition of "engaged with reporting"
+❯ "What does engaged actually mean? Clicked once? Built a custom report?
+If someone accidentally opened the tab, are they in your 3x cohort?"
+WHY IT LANDS: The threshold fundamentally changes the interpretation and
+the recommended intervention.
+TO ADDRESS: Define exact engagement criteria, show sensitivity analysis
+across definitions.
+
+─────────────────────────────────────────
+HARDEST QUESTION TO ANSWER
+"What specific onboarding action would you implement, and what engagement depth
+does it need to produce to replicate the effect — and have you tested whether
+you can actually get general users to that depth?"
+```
+
+**VP of Marketing output:**
+```
+BRIDGEKIT RED TEAM
+─────────────────────────────────────────
+STAKEHOLDER: VP of Marketing
+
+CRITIQUE 1: Correlation masquerading as a growth lever
+❯ "You're telling me to restructure onboarding based on a correlation. How do
+you know that users who found reporting weren't already power users or
+higher-intent buyers who would have upgraded regardless?"
+WHY IT LANDS: Classic selection bias. Users who proactively explore an advanced
+feature in week one are likely more sophisticated or higher-intent. The 3x lift
+could entirely reflect who they already were, not what the feature did to them.
+TO ADDRESS: A/B test forcing reporting exposure in onboarding vs. not, or a
+propensity-matched cohort controlling for acquisition source, company size,
+and plan tier.
+
+CRITIQUE 2: Where's the segmentation by channel and campaign?
+❯ "I spent millions driving traffic from different channels last quarter.
+Did you even look at where these reporting-engaged users came from? If they're
+all from our enterprise webinar funnel, this isn't a product insight —
+it's a marketing attribution insight you've mislabeled."
+WHY IT LANDS: Marketing mix directly shapes user intent. If reporting-engaged
+users came disproportionately from specific campaigns, the real lever might be
+acquiring more users like them, not changing onboarding.
+TO ADDRESS: Break the 3x uplift down by acquisition channel and campaign.
+Show the effect holds within channels, not just across the blended population.
+
+CRITIQUE 3: 90 days is a dangerously thin window
+❯ "Was there a product launch, a pricing change, or a big campaign push in
+that window? How do I know this finding isn't an artifact of whatever else
+was happening in those specific 90 days?"
+WHY IT LANDS: 90 days is susceptible to confounding events. Any single-quarter
+analysis carries high risk of temporal bias.
+TO ADDRESS: Replicate the finding across multiple 90-day windows. Flag any
+major product, pricing, or marketing events and show the effect persists
+after controlling for them.
+
+─────────────────────────────────────────
+HARDEST QUESTION TO ANSWER
+"If I run an A/B test tomorrow where we force half of new users through a
+reporting-focused onboarding flow, what conversion lift are you personally
+willing to commit to — and what's your confidence interval on that estimate?"
+```
+
+---
+
 ## Why not just use Claude?
 
 You could. But you'd need to know what to ask, how to frame it, and what a good answer looks like. Bridgekit has that baked in — it knows you're a data scientist presenting findings, so it asks the right questions automatically. No prompt engineering required. Just paste your work and run it.
@@ -239,7 +349,7 @@ Because your analysis already lives in a notebook. Bridgekit meets you there. A 
 
 ## What's next?
 
-Bridgekit is a suite, not a one-off. Three tools are live — more are coming:
+Bridgekit is a suite, not a one-off. Four tools are live — more are coming:
 
 - **Stakeholder translator** — turn your technical findings into a narrative a non-technical audience will actually follow
 - **Assumption checker** — state your analytical assumptions, get the ones you missed
