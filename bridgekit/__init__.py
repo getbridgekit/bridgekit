@@ -3,5 +3,5 @@ from .search import ask
 from .planner import plan
 from .redteam import redteam
 
-__version__ = "0.3.3"
+__version__ = "0.3.4"
 __all__ = ["evaluate", "ask", "plan", "redteam"]

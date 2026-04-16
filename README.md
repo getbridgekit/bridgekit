@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="Bridgekit" width="200"/>
+  <img src="https://raw.githubusercontent.com/getbridgekit/bridgekit/main/assets/logo.png" alt="Bridgekit" width="200"/>
 </p>
 
 # Bridgekit
