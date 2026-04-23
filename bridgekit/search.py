@@ -1,7 +1,6 @@
-import os
 from pathlib import Path
 import anthropic
-from .config import DEFAULT_MODEL
+from .config import DEFAULT_MODEL, require_anthropic_api_key
 import chromadb
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
@@ -65,11 +64,7 @@ def ask(question: str, source: str = None, text: str = None) -> str:
     if not source and not text:
         raise ValueError("Provide either 'source' (folder path) or 'text'.")
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError(
-            "ANTHROPIC_API_KEY not found. Set it with: export ANTHROPIC_API_KEY=your_key_here"
-        )
+    api_key = require_anthropic_api_key()
 
     # Collect chunks
     chunks = []

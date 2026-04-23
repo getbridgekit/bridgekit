@@ -1,6 +1,5 @@
-import os
 import anthropic
-from .config import DEFAULT_MODEL
+from .config import DEFAULT_MODEL, require_anthropic_api_key
 
 SYSTEM_PROMPT = """You are a senior statistician and data scientist advising a colleague on the right analytical approach for their problem.
 
@@ -47,11 +46,7 @@ def plan(question: str, data_description: str = None, goal: str = None) -> str:
     if not question or not question.strip():
         raise ValueError("Question cannot be empty.")
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError(
-            "ANTHROPIC_API_KEY not found. Set it with: export ANTHROPIC_API_KEY=your_key_here"
-        )
+    api_key = require_anthropic_api_key()
 
     user_message = f"Question: {question}"
     if data_description:

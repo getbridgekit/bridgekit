@@ -1,6 +1,5 @@
-import os
 import anthropic
-from .config import DEFAULT_MODEL
+from .config import DEFAULT_MODEL, require_anthropic_api_key
 
 DEFAULT_STAKEHOLDER = "a skeptical senior executive with no tolerance for weak methodology, unsupported claims, or vague business impact"
 
@@ -57,11 +56,7 @@ def redteam(text: str, stakeholder: str = None) -> str:
     if not text or not text.strip():
         raise ValueError("Text cannot be empty.")
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError(
-            "ANTHROPIC_API_KEY not found. Set it with: export ANTHROPIC_API_KEY=your_key_here"
-        )
+    api_key = require_anthropic_api_key()
 
     stakeholder_label = stakeholder if stakeholder else "Skeptical Senior Executive"
     stakeholder_desc = stakeholder if stakeholder else DEFAULT_STAKEHOLDER

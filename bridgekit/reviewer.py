@@ -1,6 +1,5 @@
-import os
 import anthropic
-from .config import DEFAULT_MODEL
+from .config import DEFAULT_MODEL, require_anthropic_api_key
 
 SYSTEM_PROMPT = """You are a senior data scientist reviewing a colleague's analysis writeup. 
 You are direct, constructive, and specific. You do not flatter — you help people improve.
@@ -56,11 +55,7 @@ def evaluate(text: str) -> str:
     if not text or not text.strip():
         raise ValueError("Text cannot be empty.")
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError(
-            "ANTHROPIC_API_KEY not found. Set it with: export ANTHROPIC_API_KEY=your_key_here"
-        )
+    api_key = require_anthropic_api_key()
 
     client = anthropic.Anthropic(api_key=api_key)
 
