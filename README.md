@@ -35,10 +35,21 @@ pip install bridgekit
 !pip install bridgekit
 ```
 
-Requires an Anthropic API key:
+Requires an API key for your chosen provider:
 
+**Anthropic (default):**
 ```bash
 export ANTHROPIC_API_KEY=your_key_here
+```
+
+**OpenAI:**
+```bash
+export OPENAI_API_KEY=your_key_here
+```
+
+**Google Gemini:**
+```bash
+export GOOGLE_API_KEY=your_key_here
 ```
 
 ---
@@ -341,6 +352,45 @@ willing to commit to — and what's your confidence interval on that estimate?"
 
 ---
 
+## Multi-Provider Support
+
+Bridgekit now supports multiple AI providers so you're not locked into one API. You can use Anthropic, OpenAI, or Google Gemini models with any tool.
+
+**Using different providers:**
+
+```python
+from bridgekit import evaluate, plan, ask, redteam
+
+# Use OpenAI (default model: gpt-4o)
+print(evaluate("Your analysis here", provider="openai"))
+
+# Use Google Gemini (default model: gemini-1.5-pro)
+print(plan("Your question here", provider="gemini"))
+
+# Use specific model
+print(redteam("Your analysis here", model="gpt-4-turbo"))
+print(ask("Your question here", source="reports/", model="claude-3-opus-20240229"))
+```
+
+**Provider auto-detection:**
+Bridgekit automatically detects the provider from model names:
+- Models starting with "claude" → Anthropic
+- Models starting with "gpt" → OpenAI  
+- Models starting with "gemini" → Google Gemini
+
+**Default models by provider:**
+- Anthropic: `claude-3-5-sonnet-20241022`
+- OpenAI: `gpt-4o`
+- Gemini: `gemini-1.5-pro`
+
+All tools support the same `provider` and `model` parameters:
+- `evaluate(text, provider=None, model=None)`
+- `plan(question, provider=None, model=None, ...)`
+- `ask(question, provider=None, model=None, ...)`
+- `redteam(text, provider=None, model=None, ...)`
+
+---
+
 ## Why not just use Claude?
 
 You could. But you'd need to know what to ask, how to frame it, and what a good answer looks like. Bridgekit has that baked in — it knows you're a data scientist presenting findings, so it asks the right questions automatically. No prompt engineering required. Just paste your work and run it.
@@ -361,7 +411,7 @@ Bridgekit is a suite, not a one-off. Four tools are live — more are coming:
 
 - **Stakeholder translator** — turn your technical findings into a narrative a non-technical audience will actually follow
 - **Assumption checker** — state your analytical assumptions, get the ones you missed
-- **Multi-model support** — use any LLM provider (OpenAI, Gemini, open source models via OpenRouter) instead of being tied to Anthropic
+- **More specialized tools** — focused on specific data science workflows and challenges
 
 Each tool is small, focused, and built for the way data scientists actually work.
 

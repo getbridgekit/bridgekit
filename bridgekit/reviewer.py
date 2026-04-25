@@ -1,5 +1,5 @@
-import anthropic
-from .config import DEFAULT_MODEL, require_anthropic_api_key
+from .config import DEFAULT_MODEL, parse_provider, get_default_model
+from .providers import create_message
 
 SYSTEM_PROMPT = """You are a senior data scientist reviewing a colleague's analysis writeup. 
 You are direct, constructive, and specific. You do not flatter — you help people improve.
@@ -42,12 +42,15 @@ BOTTOM LINE
 [one sentence]
 """
 
-def evaluate(text: str) -> str:
+def evaluate(text: str, provider: str = None, model: str = None) -> str:
     """
     Evaluate a data science analysis writeup and return structured feedback.
 
     Args:
         text: Your analysis writeup as a plain string.
+        provider: Optional. The AI provider to use ("anthropic", "openai", "gemini").
+                 If not specified, defaults to "anthropic" or infers from model.
+        model: Optional. The specific model to use. If not specified, uses the provider's default.
 
     Returns:
         Structured feedback across four dimensions.
@@ -55,20 +58,17 @@ def evaluate(text: str) -> str:
     if not text or not text.strip():
         raise ValueError("Text cannot be empty.")
 
-    api_key = require_anthropic_api_key()
+    # Parse provider and determine model
+    provider_enum = parse_provider(provider, model)
+    if model is None:
+        model = get_default_model(provider_enum)
 
-    client = anthropic.Anthropic(api_key=api_key)
-
-    message = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system=SYSTEM_PROMPT,
-        messages=[
-            {
-                "role": "user",
-                "content": f"Please review this analysis writeup:\n\n{text}"
-            }
-        ]
+    user_message = f"Please review this analysis writeup:\n\n{text}"
+    
+    return create_message(
+        provider=provider_enum,
+        system_prompt=SYSTEM_PROMPT,
+        user_message=user_message,
+        model=model,
+        max_tokens=1024
     )
-
-    return message.content[0].text

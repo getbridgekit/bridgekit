@@ -1,5 +1,5 @@
-import anthropic
-from .config import DEFAULT_MODEL, require_anthropic_api_key
+from .config import DEFAULT_MODEL, parse_provider, get_default_model
+from .providers import create_message
 
 SYSTEM_PROMPT = """You are a senior statistician and data scientist advising a colleague on the right analytical approach for their problem.
 
@@ -29,7 +29,7 @@ ALTERNATIVES
 """
 
 
-def plan(question: str, data_description: str = None, goal: str = None) -> str:
+def plan(question: str, data_description: str = None, goal: str = None, provider: str = None, model: str = None) -> str:
     """
     Recommend the right analytical approach for your problem.
 
@@ -38,6 +38,9 @@ def plan(question: str, data_description: str = None, goal: str = None) -> str:
         data_description: Optional. A plain text description of your available data.
         goal:             Optional. The goal of your analysis (e.g. "causal inference",
                           "prediction", "segmentation", "hypothesis testing", "exploration").
+        provider:         Optional. The AI provider to use ("anthropic", "openai", "gemini").
+                          If not specified, defaults to "anthropic" or infers from model.
+        model:            Optional. The specific model to use. If not specified, uses the provider's default.
 
     Returns:
         A structured analytical plan covering the recommended approach, assumptions,
@@ -46,7 +49,10 @@ def plan(question: str, data_description: str = None, goal: str = None) -> str:
     if not question or not question.strip():
         raise ValueError("Question cannot be empty.")
 
-    api_key = require_anthropic_api_key()
+    # Parse provider and determine model
+    provider_enum = parse_provider(provider, model)
+    if model is None:
+        model = get_default_model(provider_enum)
 
     user_message = f"Question: {question}"
     if data_description:
@@ -54,17 +60,10 @@ def plan(question: str, data_description: str = None, goal: str = None) -> str:
     if goal:
         user_message += f"\n\nGoal: {goal}"
 
-    client = anthropic.Anthropic(api_key=api_key)
-    message = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system=SYSTEM_PROMPT,
-        messages=[
-            {
-                "role": "user",
-                "content": user_message
-            }
-        ]
+    return create_message(
+        provider=provider_enum,
+        system_prompt=SYSTEM_PROMPT,
+        user_message=user_message,
+        model=model,
+        max_tokens=1024
     )
-
-    return message.content[0].text

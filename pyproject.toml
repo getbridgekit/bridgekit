@@ -22,6 +22,8 @@ classifiers = [
 ]
 dependencies = [
     "anthropic>=0.20.0",
+    "openai>=1.0.0",
+    "google-generativeai>=0.3.0",
     "chromadb>=0.4.0",
     "sentence-transformers>=2.0.0",
     "pypdf>=3.0.0",
