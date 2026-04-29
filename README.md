@@ -39,16 +39,19 @@ Requires an API key for your chosen provider:
 
 **Anthropic (default):**
 ```bash
+pip install bridgekit
 export ANTHROPIC_API_KEY=your_key_here
 ```
 
 **OpenAI:**
 ```bash
+pip install bridgekit[openai]
 export OPENAI_API_KEY=your_key_here
 ```
 
 **Google Gemini:**
 ```bash
+pip install bridgekit[gemini]
 export GOOGLE_API_KEY=your_key_here
 ```
 
