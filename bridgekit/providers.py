@@ -55,8 +55,7 @@ class OpenAIClient(BaseProviderClient):
         response = self.client.chat.completions.create(
             model=model,
             messages=messages,
-            max_tokens=max_tokens,
-            temperature=0.7
+            max_tokens=max_tokens
         )
         
         return response.choices[0].message.content
@@ -69,7 +68,6 @@ class GeminiClient(BaseProviderClient):
         super().__init__(api_key)
         import google.generativeai as genai
         genai.configure(api_key=api_key)
-        self.client = genai.GenerativeModel(model)
     
     def create_message(self, system_prompt: str, user_message: str, model: str, max_tokens: int = 1024) -> str:
         """Create a message using Google's Gemini API."""
@@ -81,7 +79,6 @@ class GeminiClient(BaseProviderClient):
             system_instruction=system_prompt,
             generation_config=genai.types.GenerationConfig(
                 max_output_tokens=max_tokens,
-                temperature=0.7,
             )
         )
         

@@ -11,7 +11,7 @@ class Provider(Enum):
 
 # Default models for each provider
 DEFAULT_MODELS = {
-    Provider.ANTHROPIC: "claude-3-5-sonnet-20241022",
+    Provider.ANTHROPIC: "claude-opus-4-6",
     Provider.OPENAI: "gpt-4o",
     Provider.GEMINI: "gemini-1.5-pro"
 }
