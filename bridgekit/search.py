@@ -1,6 +1,6 @@
 from pathlib import Path
-import anthropic
-from .config import DEFAULT_MODEL, require_anthropic_api_key
+from .config import DEFAULT_MODEL, parse_provider, get_default_model
+from .providers import create_message
 import chromadb
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
@@ -49,7 +49,7 @@ def _chunk(text: str) -> list[str]:
     return [c for c in chunks if c.strip()]
 
 
-def ask(question: str, source: str = None, text: str = None) -> str:
+def ask(question: str, source: str = None, text: str = None, provider: str = None, model: str = None) -> str:
     """
     Ask a question across a collection of analysis documents or raw text.
 
@@ -57,6 +57,9 @@ def ask(question: str, source: str = None, text: str = None) -> str:
         question: The question to answer.
         source:   Path to a folder containing .txt, .md, .pdf, .docx, .pptx, or .ipynb files.
         text:     A raw text string to search instead of a folder.
+        provider: Optional. The AI provider to use ("anthropic", "openai", "gemini").
+                  If not specified, defaults to "anthropic" or infers from model.
+        model:    Optional. The specific model to use. If not specified, uses the provider's default.
 
     Returns:
         An answer grounded in the provided documents.
@@ -64,7 +67,10 @@ def ask(question: str, source: str = None, text: str = None) -> str:
     if not source and not text:
         raise ValueError("Provide either 'source' (folder path) or 'text'.")
 
-    api_key = require_anthropic_api_key()
+    # Parse provider and determine model
+    provider_enum = parse_provider(provider, model)
+    if model is None:
+        model = get_default_model(provider_enum)
 
     # Collect chunks
     chunks = []
@@ -99,20 +105,17 @@ def ask(question: str, source: str = None, text: str = None) -> str:
     results = collection.query(query_texts=[question], n_results=min(8, len(chunks)))
     context = "\n\n".join(results["documents"][0])
 
-    # Generate answer with Claude
-    anthropic_client = anthropic.Anthropic(api_key=api_key)
-    message = anthropic_client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system=(
+    # Generate answer with specified provider
+    user_message = f"Context from analysis reports:\n\n{context}\n\nQuestion: {question}"
+    
+    return create_message(
+        provider=provider_enum,
+        system_prompt=(
             "You are a senior data scientist answering questions based on analysis reports. "
             "Answer only from the provided context. Be specific and cite findings where relevant. "
             "If the context does not contain enough information to answer, say so clearly."
         ),
-        messages=[{
-            "role": "user",
-            "content": f"Context from analysis reports:\n\n{context}\n\nQuestion: {question}"
-        }]
+        user_message=user_message,
+        model=model,
+        max_tokens=1024
     )
-
-    return message.content[0].text

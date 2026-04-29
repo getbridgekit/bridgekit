@@ -31,6 +31,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+openai = ["openai>=1.0.0"]
+gemini = ["google-generativeai>=0.3.0"]
 dev = [
     "pytest>=7.0.0",
     "pytest-mock>=3.0.0",
