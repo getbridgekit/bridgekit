@@ -158,3 +158,21 @@ class TestEvaluateApiCallShape:
                 messages_arg = call_kwargs.kwargs.get("messages") or call_kwargs.args[0]
                 content = str(messages_arg)
                 assert user_text in content
+
+
+class TestEvaluateCustomSystemPrompt:
+    """evaluate() should forward a custom system_prompt to the API."""
+
+    def test_custom_system_prompt_reaches_api(self):
+        custom_prompt = "You are a skeptical PhD statistician focused only on methodology."
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic:
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_RESPONSE)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.reviewer import evaluate
+                evaluate("Some analysis text.", system_prompt=custom_prompt)
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("system") == custom_prompt

@@ -42,7 +42,7 @@ BOTTOM LINE
 [one sentence]
 """
 
-def evaluate(text: str, provider: str = None, model: str = None) -> str:
+def evaluate(text: str, provider: str = None, model: str = None, system_prompt: str = None) -> str:
     """
     Evaluate a data science analysis writeup and return structured feedback.
 
@@ -51,6 +51,7 @@ def evaluate(text: str, provider: str = None, model: str = None) -> str:
         provider: Optional. The AI provider to use ("anthropic", "openai", "gemini").
                  If not specified, defaults to "anthropic" or infers from model.
         model: Optional. The specific model to use. If not specified, uses the provider's default.
+        system_prompt: Optional. A custom system prompt to override the default reviewer persona.
 
     Returns:
         Structured feedback across four dimensions.
@@ -64,10 +65,10 @@ def evaluate(text: str, provider: str = None, model: str = None) -> str:
         model = get_default_model(provider_enum)
 
     user_message = f"Please review this analysis writeup:\n\n{text}"
-    
+
     return create_message(
         provider=provider_enum,
-        system_prompt=SYSTEM_PROMPT,
+        system_prompt=system_prompt or SYSTEM_PROMPT,
         user_message=user_message,
         model=model,
         max_tokens=1024

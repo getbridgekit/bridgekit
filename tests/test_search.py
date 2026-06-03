@@ -222,6 +222,27 @@ class TestAskWithSourceFolder:
 
                     assert mock_client.messages.create.call_count == 1
 
+    def test_custom_system_prompt_reaches_api(self):
+        custom_prompt = "You are a financial analyst. Answer only in terms of revenue impact."
+        mock_chromadb, mock_ef = _make_mock_chromadb()
+
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic, \
+                 patch("chromadb.Client", mock_chromadb.Client), \
+                 patch(
+                     "chromadb.utils.embedding_functions.SentenceTransformerEmbeddingFunction",
+                     mock_ef,
+                 ):
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_ANSWER)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.search import ask
+                ask("What was revenue?", text="Revenue was $5M.", system_prompt=custom_prompt)
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("system") == custom_prompt
+
     def test_source_folder_empty_raises_value_error(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             # Folder exists but has no supported files

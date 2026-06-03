@@ -159,6 +159,20 @@ class TestPlanOptionalParameters:
 
         assert isinstance(result, str)
 
+    def test_custom_system_prompt_reaches_api(self):
+        custom_prompt = "You are a data scientist specializing in healthcare analytics."
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic:
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_RESPONSE)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.planner import plan
+                plan("Should I use a t-test or ANOVA?", system_prompt=custom_prompt)
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("system") == custom_prompt
+
     def test_all_parameters_included_in_api_call(self):
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
             with patch("anthropic.Anthropic") as MockAnthropic:

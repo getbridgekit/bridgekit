@@ -39,18 +39,20 @@ HARDEST QUESTION TO ANSWER
 """
 
 
-def redteam(text: str, stakeholder: str = None, provider: str = None, model: str = None) -> str:
+def redteam(text: str, stakeholder: str = None, provider: str = None, model: str = None, system_prompt: str = None) -> str:
     """
     Red-team a data science analysis writeup from the perspective of a skeptical stakeholder.
 
     Args:
-        text:        Your analysis writeup as a plain string.
-        stakeholder: Optional. The skeptical stakeholder role (e.g. "VP of Finance",
-                     "skeptical board member", "Chief Revenue Officer").
-                     Defaults to a generic skeptical senior executive.
-        provider:    Optional. The AI provider to use ("anthropic", "openai", "gemini").
-                     If not specified, defaults to "anthropic" or infers from model.
-        model:       Optional. The specific model to use. If not specified, uses the provider's default.
+        text:          Your analysis writeup as a plain string.
+        stakeholder:   Optional. The skeptical stakeholder role (e.g. "VP of Finance",
+                       "skeptical board member", "Chief Revenue Officer").
+                       Defaults to a generic skeptical senior executive.
+        provider:      Optional. The AI provider to use ("anthropic", "openai", "gemini").
+                       If not specified, defaults to "anthropic" or infers from model.
+        model:         Optional. The specific model to use. If not specified, uses the provider's default.
+        system_prompt: Optional. A custom system prompt to fully override the default red team persona.
+                       When provided, the stakeholder parameter is ignored.
 
     Returns:
         The 3-5 hardest critiques the stakeholder would make, plus the single
@@ -64,16 +66,16 @@ def redteam(text: str, stakeholder: str = None, provider: str = None, model: str
     if model is None:
         model = get_default_model(provider_enum)
 
-    stakeholder_label = stakeholder if stakeholder else "Skeptical Senior Executive"
-    stakeholder_desc = stakeholder if stakeholder else DEFAULT_STAKEHOLDER
-
-    system_prompt = SYSTEM_PROMPT_TEMPLATE.format(
-        stakeholder=stakeholder_desc,
-        stakeholder_label=stakeholder_label
-    )
+    if system_prompt is None:
+        stakeholder_label = stakeholder if stakeholder else "Skeptical Senior Executive"
+        stakeholder_desc = stakeholder if stakeholder else DEFAULT_STAKEHOLDER
+        system_prompt = SYSTEM_PROMPT_TEMPLATE.format(
+            stakeholder=stakeholder_desc,
+            stakeholder_label=stakeholder_label
+        )
 
     user_message = f"Red-team this analysis writeup:\n\n{text}"
-    
+
     return create_message(
         provider=provider_enum,
         system_prompt=system_prompt,

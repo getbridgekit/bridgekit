@@ -29,7 +29,7 @@ ALTERNATIVES
 """
 
 
-def plan(question: str, data_description: str = None, goal: str = None, provider: str = None, model: str = None) -> str:
+def plan(question: str, data_description: str = None, goal: str = None, provider: str = None, model: str = None, system_prompt: str = None) -> str:
     """
     Recommend the right analytical approach for your problem.
 
@@ -41,6 +41,7 @@ def plan(question: str, data_description: str = None, goal: str = None, provider
         provider:         Optional. The AI provider to use ("anthropic", "openai", "gemini").
                           If not specified, defaults to "anthropic" or infers from model.
         model:            Optional. The specific model to use. If not specified, uses the provider's default.
+        system_prompt:    Optional. A custom system prompt to override the default planner persona.
 
     Returns:
         A structured analytical plan covering the recommended approach, assumptions,
@@ -62,7 +63,7 @@ def plan(question: str, data_description: str = None, goal: str = None, provider
 
     return create_message(
         provider=provider_enum,
-        system_prompt=SYSTEM_PROMPT,
+        system_prompt=system_prompt or SYSTEM_PROMPT,
         user_message=user_message,
         model=model,
         max_tokens=1024

@@ -387,10 +387,34 @@ Bridgekit automatically detects the provider from model names:
 - Gemini: `gemini-1.5-pro`
 
 All tools support the same `provider` and `model` parameters:
-- `evaluate(text, provider=None, model=None)`
-- `plan(question, provider=None, model=None, ...)`
-- `ask(question, provider=None, model=None, ...)`
-- `redteam(text, provider=None, model=None, ...)`
+- `evaluate(text, provider=None, model=None, system_prompt=None)`
+- `plan(question, provider=None, model=None, ..., system_prompt=None)`
+- `ask(question, provider=None, model=None, ..., system_prompt=None)`
+- `redteam(text, provider=None, model=None, ..., system_prompt=None)`
+
+---
+
+## Custom System Prompts
+
+Every tool accepts an optional `system_prompt` parameter to override the default persona. Use this to adapt the tone or focus to a specific domain without changing anything else.
+
+```python
+from bridgekit import evaluate, plan, ask, redteam
+
+# Narrow the reviewer to a specific domain
+print(evaluate("my analysis", system_prompt="You are a skeptical PhD statistician focused only on methodology"))
+
+# Tailor the planner to a specific industry
+print(plan("my question", system_prompt="You are a data scientist specializing in healthcare analytics"))
+
+# Replace the red team persona entirely
+print(redteam("my analysis", system_prompt="You are a hostile regulator looking for compliance violations"))
+
+# Change the answering style for ask
+print(ask("my question", text="...", system_prompt="You are a financial analyst. Answer only in terms of revenue impact."))
+```
+
+When `system_prompt` is not provided, each tool uses its built-in default — existing behavior is unchanged.
 
 ---
 

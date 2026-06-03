@@ -49,17 +49,25 @@ def _chunk(text: str) -> list[str]:
     return [c for c in chunks if c.strip()]
 
 
-def ask(question: str, source: str = None, text: str = None, provider: str = None, model: str = None) -> str:
+DEFAULT_SYSTEM_PROMPT = (
+    "You are a senior data scientist answering questions based on analysis reports. "
+    "Answer only from the provided context. Be specific and cite findings where relevant. "
+    "If the context does not contain enough information to answer, say so clearly."
+)
+
+
+def ask(question: str, source: str = None, text: str = None, provider: str = None, model: str = None, system_prompt: str = None) -> str:
     """
     Ask a question across a collection of analysis documents or raw text.
 
     Args:
-        question: The question to answer.
-        source:   Path to a folder containing .txt, .md, .pdf, .docx, .pptx, or .ipynb files.
-        text:     A raw text string to search instead of a folder.
-        provider: Optional. The AI provider to use ("anthropic", "openai", "gemini").
-                  If not specified, defaults to "anthropic" or infers from model.
-        model:    Optional. The specific model to use. If not specified, uses the provider's default.
+        question:      The question to answer.
+        source:        Path to a folder containing .txt, .md, .pdf, .docx, .pptx, or .ipynb files.
+        text:          A raw text string to search instead of a folder.
+        provider:      Optional. The AI provider to use ("anthropic", "openai", "gemini").
+                       If not specified, defaults to "anthropic" or infers from model.
+        model:         Optional. The specific model to use. If not specified, uses the provider's default.
+        system_prompt: Optional. A custom system prompt to override the default answering persona.
 
     Returns:
         An answer grounded in the provided documents.
@@ -107,14 +115,10 @@ def ask(question: str, source: str = None, text: str = None, provider: str = Non
 
     # Generate answer with specified provider
     user_message = f"Context from analysis reports:\n\n{context}\n\nQuestion: {question}"
-    
+
     return create_message(
         provider=provider_enum,
-        system_prompt=(
-            "You are a senior data scientist answering questions based on analysis reports. "
-            "Answer only from the provided context. Be specific and cite findings where relevant. "
-            "If the context does not contain enough information to answer, say so clearly."
-        ),
+        system_prompt=system_prompt or DEFAULT_SYSTEM_PROMPT,
         user_message=user_message,
         model=model,
         max_tokens=1024
