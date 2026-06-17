@@ -38,6 +38,9 @@ dev = [
     "pytest-mock>=3.0.0",
 ]
 
+[project.scripts]
+bridgekit = "bridgekit.cli:main"
+
 [project.urls]
 Homepage = "https://usebridgekit.com"
 Issues = "https://github.com/getbridgekit/bridgekit/issues"
