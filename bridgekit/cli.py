@@ -9,7 +9,7 @@ from .search import ask
 
 def _add_provider_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--provider", help='AI provider: "anthropic", "openai", or "gemini"')
-    parser.add_argument("--model", help="Specific model to use (e.g. claude-opus-4-6, gpt-4o)")
+    parser.add_argument("--model", help="Specific model to use (e.g. claude-opus-4-8, gpt-4o)")
 
 
 def _cmd_plan(args: argparse.Namespace) -> None:

@@ -382,7 +382,7 @@ Bridgekit automatically detects the provider from model names:
 - Models starting with "gemini" → Google Gemini
 
 **Default models by provider:**
-- Anthropic: `claude-3-5-sonnet-20241022`
+- Anthropic: `claude-opus-4-8`
 - OpenAI: `gpt-4o`
 - Gemini: `gemini-1.5-pro`
 
