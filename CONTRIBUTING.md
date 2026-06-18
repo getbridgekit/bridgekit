@@ -35,7 +35,9 @@ pytest
 
 ```
 bridgekit/
-  config.py       # model and shared config
+  config.py       # model and provider config
+  providers.py    # provider client factory (Anthropic, OpenAI, Gemini)
+  cli.py          # command-line interface
   reviewer.py     # evaluate()
   search.py       # ask()
   planner.py      # plan()
@@ -44,6 +46,7 @@ tests/
   test_reviewer.py
   test_search.py
   test_planner.py
+  test_cli.py
 ```
 
 ## Adding a new tool
