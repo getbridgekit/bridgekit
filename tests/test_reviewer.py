@@ -176,3 +176,33 @@ class TestEvaluateCustomSystemPrompt:
 
                 call_kwargs = mock_client.messages.create.call_args
                 assert call_kwargs.kwargs.get("system") == custom_prompt
+
+
+class TestEvaluateMaxTokens:
+    """evaluate() should pass max_tokens through to the API."""
+
+    def test_default_max_tokens_is_1024(self):
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic:
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_RESPONSE)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.reviewer import evaluate
+                evaluate("Some analysis text.")
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("max_tokens") == 1024
+
+    def test_custom_max_tokens_reaches_api(self):
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic:
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_RESPONSE)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.reviewer import evaluate
+                evaluate("Some analysis text.", max_tokens=2048)
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("max_tokens") == 2048

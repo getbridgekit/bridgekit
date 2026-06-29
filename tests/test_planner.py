@@ -192,3 +192,33 @@ class TestPlanOptionalParameters:
                 content = str(messages_arg)
                 assert "5,000 users split 50/50." in content
                 assert "causal inference" in content
+
+
+class TestPlanMaxTokens:
+    """plan() should pass max_tokens through to the API."""
+
+    def test_default_max_tokens_is_1024(self):
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic:
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_RESPONSE)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.planner import plan
+                plan("Does our new onboarding flow increase upgrade rates?")
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("max_tokens") == 1024
+
+    def test_custom_max_tokens_reaches_api(self):
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic:
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_RESPONSE)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.planner import plan
+                plan("Does our new onboarding flow increase upgrade rates?", max_tokens=2048)
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("max_tokens") == 2048

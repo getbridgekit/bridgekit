@@ -257,3 +257,45 @@ class TestAskWithSourceFolder:
                     from bridgekit.search import ask
                     with pytest.raises(ValueError, match="No content found"):
                         ask("What happened?", source=tmpdir)
+
+
+class TestAskMaxTokens:
+    """ask() should pass max_tokens through to the API."""
+
+    def test_default_max_tokens_is_1024(self):
+        mock_chromadb, mock_ef = _make_mock_chromadb()
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic, \
+                 patch("chromadb.Client", mock_chromadb.Client), \
+                 patch(
+                     "chromadb.utils.embedding_functions.SentenceTransformerEmbeddingFunction",
+                     mock_ef,
+                 ):
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_ANSWER)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.search import ask
+                ask("What was the conversion rate?", text="The conversion rate increased by 12%.")
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("max_tokens") == 1024
+
+    def test_custom_max_tokens_reaches_api(self):
+        mock_chromadb, mock_ef = _make_mock_chromadb()
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
+            with patch("anthropic.Anthropic") as MockAnthropic, \
+                 patch("chromadb.Client", mock_chromadb.Client), \
+                 patch(
+                     "chromadb.utils.embedding_functions.SentenceTransformerEmbeddingFunction",
+                     mock_ef,
+                 ):
+                mock_client = MagicMock()
+                mock_client.messages.create.return_value = _make_mock_message(FAKE_ANSWER)
+                MockAnthropic.return_value = mock_client
+
+                from bridgekit.search import ask
+                ask("What was the conversion rate?", text="The conversion rate increased by 12%.", max_tokens=2048)
+
+                call_kwargs = mock_client.messages.create.call_args
+                assert call_kwargs.kwargs.get("max_tokens") == 2048

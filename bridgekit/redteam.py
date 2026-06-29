@@ -39,7 +39,7 @@ HARDEST QUESTION TO ANSWER
 """
 
 
-def redteam(text: str, stakeholder: str = None, provider: str = None, model: str = None, system_prompt: str = None) -> str:
+def redteam(text: str, stakeholder: str = None, provider: str = None, model: str = None, system_prompt: str = None, max_tokens: int = 1024) -> str:
     """
     Red-team a data science analysis writeup from the perspective of a skeptical stakeholder.
 
@@ -53,6 +53,7 @@ def redteam(text: str, stakeholder: str = None, provider: str = None, model: str
         model:         Optional. The specific model to use. If not specified, uses the provider's default.
         system_prompt: Optional. A custom system prompt to fully override the default red team persona.
                        When provided, the stakeholder parameter is ignored.
+        max_tokens:    Optional. Maximum tokens in the response. Defaults to 1024.
 
     Returns:
         The 3-5 hardest critiques the stakeholder would make, plus the single
@@ -81,5 +82,5 @@ def redteam(text: str, stakeholder: str = None, provider: str = None, model: str
         system_prompt=system_prompt,
         user_message=user_message,
         model=model,
-        max_tokens=1024
+        max_tokens=max_tokens
     )

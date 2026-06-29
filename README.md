@@ -104,6 +104,9 @@ onboarding users to reporting as a growth lever.
 """
 
 print(evaluate(text))
+
+# Override for longer analyses
+print(evaluate(text, max_tokens=2048))
 ```
 
 **Output:**
@@ -158,6 +161,9 @@ Supports `.txt`, `.md`, `.pdf`, `.docx`, `.pptx`, and `.ipynb` files.
 from bridgekit import ask
 
 print(ask("what drove churn in Q3?", source="reports/"))
+
+# Override for longer responses
+print(ask("what drove churn in Q3?", source="reports/", max_tokens=2048))
 ```
 
 **From raw text:**
@@ -202,7 +208,7 @@ print(plan(
 ))
 ```
 
-`data_description` and `goal` are optional — the more context you provide, the more tailored the recommendation.
+`data_description`, `goal`, and `max_tokens` are optional — the more context you provide, the more tailored the recommendation.
 
 **`goal` examples:** `"causal inference"`, `"prediction"`, `"segmentation"`, `"hypothesis testing"`, `"exploration"`
 
@@ -265,6 +271,9 @@ print(redteam(text))
 # Or specify a stakeholder
 print(redteam(text, stakeholder="VP of Engineering"))
 print(redteam(text, stakeholder="VP of Marketing"))
+
+# Override for longer responses
+print(redteam(text, max_tokens=2048))
 ```
 
 Same writeup, different attack angles:
