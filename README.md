@@ -366,7 +366,7 @@ willing to commit to — and what's your confidence interval on that estimate?"
 
 ## Tool #5: Compare
 
-Run the same tool through two providers and see both outputs side by side. Useful for evaluating which model works best for your use case — as a one-liner.
+Run the same tool through two providers and see both outputs side by side. A synthesis summary at the top highlights where the models agreed, where they differed in severity, and which gave more actionable feedback — so you get the key insight without reading both outputs in full. Useful for evaluating which model works best for your use case — as a one-liner.
 
 ```python
 from bridgekit import compare
@@ -405,6 +405,16 @@ print(compare(text, providers=["anthropic", "gemini"]))
 BRIDGEKIT COMPARE: EVALUATE
 ─────────────────────────────────────────
 
+SUMMARY
+─────────────────────────────────────────
+Both outputs rated Clarity as STRONG. They diverged on severity: Anthropic
+rated Statistical Rigor as MISSING (harsher) while OpenAI called it NEEDS WORK.
+Anthropic gave more specific feedback — naming the correlation-vs-causation
+problem explicitly and suggesting concrete fixes. OpenAI's feedback stayed
+more generic. Anthropic's bottom line targets the core analytical flaw;
+OpenAI's restates the statistical point only.
+
+
 ANTHROPIC  claude-opus-4-8
 ─────────────────────────────────────────
 BRIDGEKIT ANALYSIS REVIEW
@@ -426,7 +436,7 @@ BRIDGEKIT ANALYSIS REVIEW
 ...
 ```
 
-Both providers are called in parallel, so the total wait time is the slower of the two — not the sum.
+Both providers are called in parallel, so the total wait time is the slower of the two — not the sum. The synthesis summary is a third sequential call made after both outputs are ready.
 
 ---
 
