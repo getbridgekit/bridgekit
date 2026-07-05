@@ -364,6 +364,72 @@ willing to commit to — and what's your confidence interval on that estimate?"
 
 ---
 
+## Tool #5: Compare
+
+Run the same tool through two providers and see both outputs side by side. Useful for evaluating which model works best for your use case — as a one-liner.
+
+```python
+from bridgekit import compare
+
+text = """
+I analyzed 90 days of user behavior data to understand what drives subscription
+upgrades. Users who engaged with the reporting feature within their first week
+were 3x more likely to upgrade within 30 days. I recommend we prioritize
+onboarding users to reporting as a growth lever.
+"""
+
+# Compare evaluate across Anthropic and OpenAI (default)
+print(compare(text, tool="evaluate"))
+
+# Compare plan across two providers
+print(compare("Did our onboarding flow reduce churn?", tool="plan"))
+
+# Compare redteam with a specific stakeholder
+print(compare(text, tool="redteam", stakeholder="VP of Finance"))
+
+# Override models for each provider
+print(compare(text, model_a="claude-haiku-4-5-20251001", model_b="gpt-4-turbo"))
+
+# Compare two specific providers
+print(compare(text, providers=["anthropic", "gemini"]))
+```
+
+**Parameters:**
+- `tool` - which tool to run: `"evaluate"`, `"plan"`, or `"redteam"` (defaults to `"evaluate"`)
+- `providers` - list of exactly two providers to compare (defaults to `["anthropic", "openai"]`)
+- `model_a`, `model_b` - optional model overrides for the first and second provider
+- `**kwargs` - additional arguments passed through to the underlying tool (e.g. `max_tokens`, `stakeholder`, `data_description`)
+
+**Output:**
+```
+BRIDGEKIT COMPARE: EVALUATE
+─────────────────────────────────────────
+
+ANTHROPIC  claude-opus-4-8
+─────────────────────────────────────────
+BRIDGEKIT ANALYSIS REVIEW
+─────────────────────────────────────────
+
+1. CLARITY
+✅ STRONG — Clean and jargon-free.
+
+...
+
+OPENAI  gpt-4o
+─────────────────────────────────────────
+BRIDGEKIT ANALYSIS REVIEW
+─────────────────────────────────────────
+
+1. CLARITY
+⚠️  NEEDS WORK — The phrase "engagement feature" needs more context.
+
+...
+```
+
+Both providers are called in parallel, so the total wait time is the slower of the two — not the sum.
+
+---
+
 ## Multi-Provider Support
 
 Bridgekit now supports multiple AI providers so you're not locked into one API. You can use Anthropic, OpenAI, or Google Gemini models with any tool.
