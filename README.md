@@ -440,6 +440,60 @@ Both providers are called in parallel, so the total wait time is the slower of t
 
 ---
 
+## Tool #6: Summarize
+
+Turn a long analysis writeup, notebook, or report into a short executive summary — the gap between doing the analysis and communicating it to people who won't read the whole thing.
+
+```python
+from bridgekit import summarize
+
+text = """
+I analyzed 90 days of user behavior data to understand what drives subscription
+upgrades. Users who engaged with the reporting feature within their first week
+were 3x more likely to upgrade within 30 days. Sample size was 1,200 users
+across two acquisition channels, with consistent results in both. I recommend
+we prioritize onboarding users to reporting as a growth lever.
+"""
+
+# Default — general business audience
+print(summarize(text))
+
+# Or specify an audience
+print(summarize(text, audience="VP of Marketing"))
+print(summarize(text, audience="board"))
+
+# Override for longer summaries
+print(summarize(text, max_tokens=2048))
+```
+
+**Output:**
+```
+BRIDGEKIT SUMMARY
+─────────────────────────────────────────
+AUDIENCE: VP of Marketing
+
+KEY TAKEAWAY
+Getting users into the reporting feature in their first week is our strongest
+predictor of paid upgrades — users who engage with it are 3x more likely to
+convert within 30 days.
+
+WHAT WE FOUND
+- Early reporting engagement (week 1) drives 3x higher upgrade rates within 30 days
+- Finding holds across both acquisition channels, suggesting it's a genuine
+  behavior pattern, not channel-specific
+- Analyzed 1,200 users over 90 days with sufficient scale to trust the result
+
+SO WHAT
+We should redesign onboarding to get users to reporting faster. This is a
+high-confidence growth lever worth testing immediately.
+
+─────────────────────────────────────────
+```
+
+`audience`, `provider`, `model`, `system_prompt`, and `max_tokens` are all optional — the more specific the audience, the more tailored the summary.
+
+---
+
 ## Multi-Provider Support
 
 Bridgekit now supports multiple AI providers so you're not locked into one API. You can use Anthropic, OpenAI, or Google Gemini models with any tool.
@@ -476,6 +530,7 @@ All tools support the same `provider` and `model` parameters:
 - `plan(question, provider=None, model=None, ..., system_prompt=None)`
 - `ask(question, provider=None, model=None, ..., system_prompt=None)`
 - `redteam(text, provider=None, model=None, ..., system_prompt=None)`
+- `summarize(text, provider=None, model=None, ..., system_prompt=None)`
 
 ---
 
@@ -484,7 +539,7 @@ All tools support the same `provider` and `model` parameters:
 Every tool accepts an optional `system_prompt` parameter to override the default persona. Use this to adapt the tone or focus to a specific domain without changing anything else.
 
 ```python
-from bridgekit import evaluate, plan, ask, redteam
+from bridgekit import evaluate, plan, ask, redteam, summarize
 
 # Narrow the reviewer to a specific domain
 print(evaluate("my analysis", system_prompt="You are a skeptical PhD statistician focused only on methodology"))
@@ -497,6 +552,9 @@ print(redteam("my analysis", system_prompt="You are a hostile regulator looking 
 
 # Change the answering style for ask
 print(ask("my question", text="...", system_prompt="You are a financial analyst. Answer only in terms of revenue impact."))
+
+# Replace the summarizer persona entirely
+print(summarize("my analysis", system_prompt="You are a data journalist writing a one-paragraph news brief."))
 ```
 
 When `system_prompt` is not provided, each tool uses its built-in default — existing behavior is unchanged.
