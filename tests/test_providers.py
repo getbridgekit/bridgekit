@@ -153,21 +153,33 @@ class TestOllamaClient:
         )
 
 
+def _fake_openai_module():
+    """A stand-in for the `openai` package so these tests don't require it
+    to actually be installed - it's an optional extra, and CI only installs
+    `.[dev]`."""
+    fake_module = types.ModuleType("openai")
+    fake_module.OpenAI = MagicMock()
+    return fake_module
+
+
 class TestOpenRouterClient:
     """OpenRouterClient reuses OpenAI's SDK pointed at OpenRouter's base URL."""
 
     def test_uses_openrouter_base_url(self):
-        with patch("openai.OpenAI") as mock_openai:
+        fake_openai = _fake_openai_module()
+        with patch.dict(sys.modules, {"openai": fake_openai}):
             OpenRouterClient(api_key="or-test-key")
-            mock_openai.assert_called_once_with(api_key="or-test-key", base_url="https://openrouter.ai/api/v1")
+        fake_openai.OpenAI.assert_called_once_with(api_key="or-test-key", base_url="https://openrouter.ai/api/v1")
 
     def test_create_message_returns_response_content(self):
+        fake_openai = _fake_openai_module()
         mock_response = MagicMock()
         mock_response.choices[0].message.content = "response text"
         mock_client_instance = MagicMock()
         mock_client_instance.chat.completions.create.return_value = mock_response
+        fake_openai.OpenAI.return_value = mock_client_instance
 
-        with patch("openai.OpenAI", return_value=mock_client_instance):
+        with patch.dict(sys.modules, {"openai": fake_openai}):
             client = OpenRouterClient(api_key="or-test-key")
             result = client.create_message(
                 "system prompt", "user message", model="deepseek/deepseek-v4-flash-0731:free", max_tokens=100
@@ -195,7 +207,8 @@ class TestCreateClientRouting:
         assert isinstance(client, OllamaClient)
 
     def test_routes_openrouter(self):
+        fake_openai = _fake_openai_module()
         with patch.dict(os.environ, {"OPENROUTER_API_KEY": "sk-or-test"}, clear=True), \
-                patch("openai.OpenAI"):
+                patch.dict(sys.modules, {"openai": fake_openai}):
             client = create_client(Provider.OPENROUTER, model="deepseek/deepseek-v4-flash-0731:free")
         assert isinstance(client, OpenRouterClient)
