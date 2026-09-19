@@ -1,5 +1,6 @@
 """Provider client factory for Bridgekit multi-provider support."""
 
+import os
 from typing import Union, Dict, Any, List
 from .config import Provider, require_api_key, get_default_model
 
@@ -39,11 +40,14 @@ class AnthropicClient(BaseProviderClient):
 
 class OpenAIClient(BaseProviderClient):
     """OpenAI provider client."""
-    
-    def __init__(self, api_key: str):
+
+    def __init__(self, api_key: str, base_url: str = None):
         super().__init__(api_key)
         import openai
-        self.client = openai.OpenAI(api_key=api_key)
+        if base_url:
+            self.client = openai.OpenAI(api_key=api_key, base_url=base_url)
+        else:
+            self.client = openai.OpenAI(api_key=api_key)
     
     def create_message(self, system_prompt: str, user_message: str, model: str, max_tokens: int = 1024) -> str:
         """Create a message using OpenAI's API."""
@@ -86,6 +90,35 @@ class GeminiClient(BaseProviderClient):
         return response.text
 
 
+class OllamaClient(BaseProviderClient):
+    """Ollama provider client for locally-hosted models. No API key required."""
+
+    def __init__(self, api_key: str = None):
+        super().__init__(api_key)
+        import ollama
+        host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+        self.client = ollama.Client(host=host)
+
+    def create_message(self, system_prompt: str, user_message: str, model: str, max_tokens: int = 1024) -> str:
+        """Create a message using a locally-hosted Ollama model."""
+        response = self.client.chat(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            options={"num_predict": max_tokens}
+        )
+        return response["message"]["content"]
+
+
+class OpenRouterClient(OpenAIClient):
+    """OpenRouter provider client. OpenAI-compatible API routing to many models, including free tiers."""
+
+    def __init__(self, api_key: str):
+        super().__init__(api_key, base_url="https://openrouter.ai/api/v1")
+
+
 def create_client(provider: Provider, model: str = None) -> BaseProviderClient:
     """Create a client for the specified provider."""
     if model is None:
@@ -99,6 +132,10 @@ def create_client(provider: Provider, model: str = None) -> BaseProviderClient:
         return OpenAIClient(api_key)
     elif provider == Provider.GEMINI:
         return GeminiClient(api_key)
+    elif provider == Provider.OLLAMA:
+        return OllamaClient(api_key)
+    elif provider == Provider.OPENROUTER:
+        return OpenRouterClient(api_key)
     else:
         raise ValueError(f"Unsupported provider: {provider}")
 

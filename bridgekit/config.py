@@ -7,25 +7,39 @@ class Provider(Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    OLLAMA = "ollama"
+    OPENROUTER = "openrouter"
 
 
 # Default models for each provider
 DEFAULT_MODELS = {
     Provider.ANTHROPIC: "claude-opus-4-8",
     Provider.OPENAI: "gpt-4o",
-    Provider.GEMINI: "gemini-1.5-pro"
+    Provider.GEMINI: "gemini-1.5-pro",
+    Provider.OLLAMA: "llama3.2",
+    Provider.OPENROUTER: "deepseek/deepseek-v4-flash-0731:free",
 }
 
 # Legacy support
 DEFAULT_MODEL = DEFAULT_MODELS[Provider.ANTHROPIC]
 
+# Common local model family names served by Ollama. Used to infer the
+# provider from a bare model name when no explicit provider is given.
+OLLAMA_MODEL_PREFIXES = (
+    "llama", "mistral", "mixtral", "gemma", "phi", "qwen",
+    "codellama", "vicuna", "deepseek", "tinyllama",
+)
 
-def require_api_key(provider: Provider = Provider.ANTHROPIC) -> str:
+
+def require_api_key(provider: Provider = Provider.ANTHROPIC) -> Optional[str]:
     """Return the API key for the specified provider from the environment, or raise a clear error.
 
     Each Bridgekit tool calls this before constructing a client so
     users get the same friendly message instead of whatever the SDK surfaces
     when the key is missing.
+
+    Ollama runs locally and doesn't use an API key, so this returns None
+    for that provider instead of raising.
     """
     if provider == Provider.ANTHROPIC:
         api_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -46,6 +60,15 @@ def require_api_key(provider: Provider = Provider.ANTHROPIC) -> str:
         if not api_key:
             raise EnvironmentError(
                 "GOOGLE_API_KEY not found. Set it with: export GOOGLE_API_KEY=your_key_here"
+            )
+        return api_key
+    elif provider == Provider.OLLAMA:
+        return None
+    elif provider == Provider.OPENROUTER:
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not api_key:
+            raise EnvironmentError(
+                "OPENROUTER_API_KEY not found. Set it with: export OPENROUTER_API_KEY=your_key_here"
             )
         return api_key
     else:
@@ -73,7 +96,13 @@ def parse_provider(provider: Optional[str] = None, model: Optional[str] = None) 
             return Provider.OPENAI
         elif model.startswith("gemini"):
             return Provider.GEMINI
-    
+        elif "/" in model:
+            # OpenRouter model names use a "vendor/model" format,
+            # e.g. "deepseek/deepseek-v4-flash-0731:free"
+            return Provider.OPENROUTER
+        elif model.startswith(OLLAMA_MODEL_PREFIXES):
+            return Provider.OLLAMA
+
     # Default to Anthropic for backward compatibility
     return Provider.ANTHROPIC
 

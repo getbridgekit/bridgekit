@@ -55,6 +55,18 @@ pip install bridgekit[gemini]
 export GOOGLE_API_KEY=your_key_here
 ```
 
+**Ollama (local models, free, no API key):**
+```bash
+pip install bridgekit[ollama]
+# Make sure Ollama is running locally: https://ollama.com
+```
+
+**OpenRouter (free and paid models via one API):**
+```bash
+pip install bridgekit[openrouter]
+export OPENROUTER_API_KEY=your_key_here
+```
+
 ---
 
 ## Getting Started
@@ -496,7 +508,7 @@ high-confidence growth lever worth testing immediately.
 
 ## Multi-Provider Support
 
-Bridgekit now supports multiple AI providers so you're not locked into one API. You can use Anthropic, OpenAI, or Google Gemini models with any tool.
+Bridgekit now supports multiple AI providers so you're not locked into one API. You can use Anthropic, OpenAI, Google Gemini, local models via Ollama, or any model on OpenRouter with any tool.
 
 **Using different providers:**
 
@@ -509,21 +521,35 @@ print(evaluate("Your analysis here", provider="openai"))
 # Use Google Gemini (default model: gemini-1.5-pro)
 print(plan("Your question here", provider="gemini"))
 
+# Use a local model via Ollama - free, private, no API key (default model: llama3.2)
+print(evaluate("Your analysis here", provider="ollama"))
+
+# Use OpenRouter to access a wide range of models, including free tiers
+print(evaluate("Your analysis here", provider="openrouter", model="deepseek/deepseek-v4-flash-0731:free"))
+
 # Use specific model
 print(redteam("Your analysis here", model="gpt-4-turbo"))
 print(ask("Your question here", source="reports/", model="claude-3-opus-20240229"))
 ```
+
+**Ollama setup:** install and start [Ollama](https://ollama.com) locally, then pull a model (e.g. `ollama pull llama3.2`). By default Bridgekit connects to `http://localhost:11434`; set `OLLAMA_HOST` to point at a different host.
 
 **Provider auto-detection:**
 Bridgekit automatically detects the provider from model names:
 - Models starting with "claude" → Anthropic
 - Models starting with "gpt" → OpenAI  
 - Models starting with "gemini" → Google Gemini
+- Model names containing "/" (e.g. `deepseek/deepseek-v4-flash-0731:free`) → OpenRouter
+- Common local model families (e.g. "llama", "mistral", "mixtral", "gemma", "phi", "qwen") → Ollama
 
 **Default models by provider:**
 - Anthropic: `claude-opus-4-8`
 - OpenAI: `gpt-4o`
 - Gemini: `gemini-1.5-pro`
+- Ollama: `llama3.2`
+- OpenRouter: `deepseek/deepseek-v4-flash-0731:free`
+
+> **Note:** OpenRouter's free-tier model lineup rotates over time. Check the current list at [openrouter.ai/models?max_price=0](https://openrouter.ai/models?max_price=0) if a `:free` model stops working, and pass `model=` explicitly with whichever slug is currently free.
 
 All tools support the same `provider` and `model` parameters:
 - `evaluate(text, provider=None, model=None, system_prompt=None)`
